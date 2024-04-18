@@ -10,12 +10,13 @@
         <th>Name</th>
         <th>Age</th>
       </tr>
-      @for(u <- users){ <tr>
-        <td>@u.id</td>
-        <td>@u.name</td>
-        <td>@u.age</td>
+      @for(u <- users){
+        <tr>
+          <td>@u.id</td>
+          <td>@u.name</td>
+          <td>@u.age</td>
         </tr>
-        }
+      }
     </table>
   </div>
 </div>
