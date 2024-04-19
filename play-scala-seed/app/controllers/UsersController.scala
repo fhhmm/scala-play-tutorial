@@ -12,6 +12,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms.text
 import play.api.data.Forms.number
+import play.api.data.Forms.optional
 import dao.UsersDao
 import models.User
 
@@ -19,8 +20,8 @@ import models.User
 class UsersController @Inject()(dao: UsersDao, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def index = Action.async { implicit request =>
-    dao.all().map {
-      u => Ok(views.html.users(u))
+    dao.allWithCompany().map {
+      result => Ok(views.html.users(result))
     }
   }
 
@@ -32,8 +33,9 @@ class UsersController @Inject()(dao: UsersDao, cc: ControllerComponents)(implici
   val userForm = Form(
     mapping(
       "name" -> text,
-      "age" -> number
-    )((name, age) => User(None, name, age))
-    (u => Some((u.name, u.age)))
+      "age" -> number,
+      "companyId" -> optional(number)
+    )((name, age, companyId) => User(None, name, age, companyId))
+    (u => Some((u.name, u.age, u.companyId)))
   )
 }

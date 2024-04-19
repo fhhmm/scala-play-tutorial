@@ -1,4 +1,4 @@
-@(users: Seq[User])(implicit request: RequestHeader)
+@(data: Seq[(User, Option[Company])])(implicit request: RequestHeader)
 @import views.html.helper.CSRF
 
 @main("Users") {
@@ -9,6 +9,7 @@
       @CSRF.formField
       <input name="name" type="text" placeholder="name" />
       <input name="age" type="number" placeholder="age" />
+      <input name="companyId" type="number" placeholder="companyId" />
       <input type="submit" />
     </form>
     <h1>Users</h1>
@@ -17,12 +18,14 @@
         <th>Id</th>
         <th>Name</th>
         <th>Age</th>
+        <th>Company</th>
       </tr>
-      @for(u <- users){
+      @for((user, company) <- data){
         <tr>
-          <td>@u.id</td>
-          <td>@u.name</td>
-          <td>@u.age</td>
+          <td>@user.id</td>
+          <td>@user.name</td>
+          <td>@user.age</td>
+          <td>@company.map(_.name)</td>
         </tr>
       }
     </table>
