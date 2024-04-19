@@ -17,6 +17,8 @@ extends HasDatabaseConfigProvider[JdbcProfile] {
 
   def all()(implicit ec: ExecutionContext): Future[Seq[User]] = db.run(Users.result)
 
+  def insert(u: User)(implicit ec: ExecutionContext): Future[Unit] = db.run(Users += u).map { _ => () }
+
   private class UsersTable(tag: Tag) extends Table[User](tag, "USERS") {
     def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("NAME")
