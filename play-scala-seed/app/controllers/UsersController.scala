@@ -1,6 +1,7 @@
 package controllers
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.mvc.AbstractController
@@ -26,8 +27,19 @@ class UsersController @Inject()(dao: UsersDao, cc: ControllerComponents)(implici
   }
 
   def create = Action.async { implicit request =>
-    val user: User = userForm.bindFromRequest.get
-    dao.insert(user).map(_ => Redirect(routes.UsersController.index))
+    userForm.bindFromRequest.fold(
+      formWithErrors => {
+        Future.successful(BadRequest("Form input has errors"))
+      },
+      userData => {
+        UserValidation.validate(userData) match {
+          case Right(user) =>
+            dao.insert(user).map(_ => Redirect(routes.UsersController.index))
+          case Left(errors) =>
+            Future.successful(BadRequest(errors.mkString("\n")))
+        }
+      }
+    )
   }
 
   val userForm = Form(
